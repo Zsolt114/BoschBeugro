@@ -9,25 +9,17 @@ const SelectMachine: React.FC = () => {
     const dispatch = useAppDispatch();
     const selectedMachine = useAppSelector((state) => state.machine.selectedMachine);
     
-    const [data, setData] = React.useState([]);
-    React.useEffect(() => {
-        const url = new URL('http://localhost:8000/api/machineselectoptions');
 
-        fetch(url.toString(), {
-            method: 'GET',
-        })
-            .then((response) => {
-                if (!response.ok) throw new Error('Hiba a kérésben');
-                return response.json();
-            })
-            .then((json) => {
-                console.log('Kapott adat:', json);
-                setData(json);
-            })
-            .catch((error) => {
-                console.error('Hiba:', error);
-            });
-    }, []);
+    const [data, setData] = React.useState([]);
+   
+	
+
+
+
+
+
+
+	
 
     const handleValueChange = (value: string) => {
         dispatch(setSelectedMachine(value));
@@ -39,7 +31,7 @@ const SelectMachine: React.FC = () => {
                 className="text-violet11 hover:bg-mauve3 data-[placeholder]:text-violet9 inline-flex h-[35px] items-center justify-center gap-[5px] rounded bg-amber-600 px-[15px] text-[13px] leading-none shadow-[0_2px_10px] shadow-black/10 outline-none focus:shadow-[0_0_0_2px] focus:shadow-black"
                 aria-label="Food"
             >
-                <Select.Value placeholder="Összes" />
+                <Select.Value placeholder="All" />
                 <Select.Icon className="text-violet11">
                     <ChevronDownIcon />
                 </Select.Icon>
