@@ -42,4 +42,5 @@ class TestChartController23 extends Controller
             ->get();
         return response()->json($data);
     }
+    
 }

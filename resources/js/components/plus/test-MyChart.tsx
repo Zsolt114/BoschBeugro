@@ -4,18 +4,21 @@ import { useAppSelector } from "../../hook";
 
 
 const MyBarChart: React.FC = () => {
-  const startDate = useAppSelector((state) => state.date.startDate);
-  const endDate = useAppSelector((state) => state.date.endDate);
+    const startDate = useAppSelector((state) => state.date.startDate);
+    const endDate = useAppSelector((state) => state.date.endDate);
     const [data, setData] = useState([]);
     
     useEffect(() => {
-    if (!startDate || !endDate) return;
+      let url: URL;
+      if (!startDate || !endDate) {
+        url = new URL("http://localhost:8000/chart-data");
+      } else {
+        url = new URL("http://localhost:8000/chart-data-bydate");
+        url.searchParams.append("start_date", startDate.toISOString().slice(0, 10));
+        url.searchParams.append("end_date", endDate.toISOString().slice(0, 10));
+      }
 
-    const url = new URL("http://localhost:8000/chart-data");
-    url.searchParams.append("start_date", startDate.toISOString().slice(0, 10));
-    url.searchParams.append("end_date", endDate.toISOString().slice(0, 10));
-
-    fetch(url.toString(), {
+      fetch(url.toString(), {
       method: "GET",
     })
       .then((response) => {
@@ -29,6 +32,12 @@ const MyBarChart: React.FC = () => {
       .catch((error) => {
         console.error("Hiba:", error);
       });
+
+
+   
+    
+
+    
   }, [startDate, endDate]);
 
     const handleClick = (data, index) => {
