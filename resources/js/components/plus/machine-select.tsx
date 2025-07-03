@@ -11,15 +11,24 @@ const SelectMachine: React.FC = () => {
     
 
     const [data, setData] = React.useState([]);
-   
-	
+    React.useEffect(() => {
+        const url = new URL('http://localhost:8000/api/machineselectoptions');
 
-
-
-
-
-
-	
+        fetch(url.toString(), {
+            method: 'GET',
+        })
+            .then((response) => {
+                if (!response.ok) throw new Error('Hiba a kérésben');
+                return response.json();
+            })
+            .then((json) => {
+                console.log('Kapott adat:', json);
+                setData(json);
+            })
+            .catch((error) => {
+                console.error('Hiba:', error);
+            });
+    }, []);
 
     const handleValueChange = (value: string) => {
         dispatch(setSelectedMachine(value));
