@@ -45,7 +45,13 @@ export default function TableDisplay() {
         const fetchTableHeadingData = async () => {
             try {
                 const url = new URL('http://localhost:8000/api/table-heading');
-                url.searchParams.append('selectedMachine', selectedMachine !== null ? selectedMachine : 'all');
+
+                if (selectedMachine === null || selectedMachine.toLowerCase() === 'all') {
+                    return; // Visszatérés, ha null vagy 'all'
+                } else {
+                    url.searchParams.append('selectedMachine', selectedMachine);
+                    // Itt folytathatod a további kódot
+                }
 
                 fetch(url.toString(), {
                     method: 'GET',
@@ -71,7 +77,7 @@ export default function TableDisplay() {
 
     return (
         <>
-            <h1 className="ml-5 pl-3 border-l-4 border-orange-500">
+            <h1 className="ml-5 border-l-4 border-orange-500 pl-3">
                 {selectedMachine === 'all' || !selectedMachine
                     ? 'All'
                     : tableHeadingData?.[0]

@@ -38,7 +38,7 @@ const SelectMachine: React.FC = () => {
         <Select.Root value={selectedMachine} onValueChange={handleValueChange}>
             <Select.Trigger
                 className="text-violet11 hover:bg-mauve3 data-[placeholder]:text-violet9 inline-flex h-[35px] items-center justify-center gap-[5px] rounded bg-amber-600 px-[15px] text-[13px] leading-none shadow-[0_2px_10px] shadow-black/10 outline-none focus:shadow-[0_0_0_2px] focus:shadow-black"
-                aria-label="Food"
+                aria-label="Machine"
             >
                 <Select.Value placeholder="All" />
                 <Select.Icon className="text-violet11">
