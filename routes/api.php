@@ -13,3 +13,6 @@ Route::get('/api/machineselectoptions', [MachinesSelectorController::class, 'get
 Route::get('/api/table-data', [TableController::class, 'getData']);
 
 Route::get('/api/table-data-bydate', [TableController::class, 'getDataByDate']);
+
+Route::get('/api/table-heading', [TableController::class, 'getMachineData']);
+

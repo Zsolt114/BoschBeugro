@@ -3,70 +3,81 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../hook';
 
-const invoices = [
-    {
-        invoice: 'INV001',
-        paymentStatus: 'Paid',
-        totalAmount: '$250.00',
-        paymentMethod: 'Credit Card',
-    },
-    {
-        invoice: 'INV001',
-        paymentStatus: 'Paid',
-        totalAmount: '$250.00',
-        paymentMethod: 'Credit Card',
-    },
-    {
-        invoice: 'INV001',
-        paymentStatus: 'Paid',
-        totalAmount: '$250.00',
-        paymentMethod: 'Credit Card',
-    },
-];
-
 export default function TableDisplay() {
-        const startDate = useAppSelector((state) => state.date.startDate);
-        const endDate = useAppSelector((state) => state.date.endDate);
-        const selectedMachine = useAppSelector((state) => state.machine.selectedMachine);
-        const tableShowSlice = useAppSelector((state) => state.tableShowSlice.tableShowSlice);
-    
-        const [data, setData] = useState([]);
-    
-    
-        useEffect(() => {
-            let url: URL;
-            if (!startDate || !endDate) {
-                url = new URL('http://localhost:8000/api/table-data');
-                console.log(selectedMachine);
+    const startDate = useAppSelector((state) => state.date.startDate);
+    const endDate = useAppSelector((state) => state.date.endDate);
+    const selectedMachine = useAppSelector((state) => state.machine.selectedMachine);
+    const tableShowSlice = useAppSelector((state) => state.tableShowSlice.tableShowSlice);
+
+    const [data, setData] = useState([]);
+    const [tableHeadingData, setTableHeadingData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                let url = new URL('http://localhost:8000/api/' + (startDate && endDate ? 'table-data-bydate' : 'table-data'));
+
                 url.searchParams.append('selectedMachine', selectedMachine !== null ? selectedMachine : 'all');
                 url.searchParams.append('productname', tableShowSlice !== null ? tableShowSlice : '');
-            } else {
-                url = new URL('http://localhost:8000/api/table-data-bydate');
-                url.searchParams.append('selectedMachine', selectedMachine !== null ? selectedMachine : 'all');
-                url.searchParams.append('productname', tableShowSlice !== null ? tableShowSlice : '');
-                url.searchParams.append('start_date', startDate.toISOString().slice(0, 10));
-                url.searchParams.append('end_date', endDate.toISOString().slice(0, 10));
+                if (startDate && endDate) {
+                    url.searchParams.append('start_date', startDate.toISOString().slice(0, 10));
+                    url.searchParams.append('end_date', endDate.toISOString().slice(0, 10));
+                }
+                fetch(url.toString(), {
+                    method: 'GET',
+                })
+                    .then((response) => {
+                        if (!response.ok) throw new Error('Hiba a kérésben');
+                        return response.json();
+                    })
+                    .then((json) => {
+                        console.log('Kapott adat:', json);
+                        setData(json);
+                    })
+                    .catch((error) => {
+                        console.error('Hiba:', error);
+                    });
+            } catch (error) {
+                console.error('Hiba:', error);
             }
-    
-            fetch(url.toString(), {
-                method: 'GET',
-            })
-                .then((response) => {
-                    if (!response.ok) throw new Error('Hiba a kérésben');
-                    return response.json();
+        };
+
+        const fetchTableHeadingData = async () => {
+            try {
+                const url = new URL('http://localhost:8000/api/table-heading');
+                url.searchParams.append('selectedMachine', selectedMachine !== null ? selectedMachine : 'all');
+
+                fetch(url.toString(), {
+                    method: 'GET',
                 })
-                .then((json) => {
-                    console.log('Kapott adat:', json);
-                    setData(json);
-                })
-                .catch((error) => {
-                    console.error('Hiba:', error);
-                });
-        }, []);
+                    .then((response) => {
+                        if (!response.ok) throw new Error('Hiba a kérésben');
+                        return response.json();
+                    })
+                    .then((json) => {
+                        console.log('Kapott adat:', json);
+                        setTableHeadingData(json);
+                    })
+                    .catch((error) => {
+                        console.error('Hiba:', error);
+                    });
+            } catch (error) {
+                console.error('Hiba:', error);
+            }
+        };
+        fetchData();
+        fetchTableHeadingData();
+    }, []);
 
     return (
         <>
-            <h1>{selectedMachine ? selectedMachine : 'All'}</h1>
+            <h1 className="ml-5 pl-3 border-l-4 border-orange-500">
+                {selectedMachine === 'all' || !selectedMachine
+                    ? 'All'
+                    : tableHeadingData?.[0]
+                      ? `${tableHeadingData[0].machine_name} - ${tableHeadingData[0].location} (${new Date(tableHeadingData[0].installation_date).toLocaleDateString()}, ${tableHeadingData[0].status})`
+                      : selectedMachine}
+            </h1>
             <Table>
                 <TableCaption>A list of your recent invoices.</TableCaption>
                 <TableHeader>

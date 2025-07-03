@@ -20,16 +20,16 @@ class TableController extends Controller
 
         $query = DB::table('recycling')
             ->join('products', 'recycling.product', '=', 'products.id')
-            ->select('recycling.id','products.product_name','products.type_number', 'recycling.event_date')
+            ->select('recycling.id', 'products.product_name', 'products.type_number', 'recycling.event_date')
             ->orderByDesc('recycling.event_date');
-        
+
         if (!empty($selectedMachine) && strtolower($selectedMachine) !== "all") {
             $query->where('recycling.machine', $selectedMachine);
         }
         if (!empty($selectedProductname) && strtolower($selectedMachine) !== "") {
             $query->where('products.product_name', $selectedProductname);
         }
-        
+
         $data = $query->get();
         return response()->json($data);
     }
@@ -57,15 +57,31 @@ class TableController extends Controller
 
         $query = DB::table('recycling')
             ->join('products', 'recycling.product', '=', 'products.id')
-            ->select('recycling.id','products.product_name','products.type_number', 'recycling.event_date')
+            ->select('recycling.id', 'products.product_name', 'products.type_number', 'recycling.event_date')
             ->whereBetween('event_date', [$startDate, $endDate])
             ->orderByDesc('recycling.event_date');
-        
+
         if (!empty($selectedMachine) && strtolower($selectedMachine) !== "all") {
             $query->where('recycling.machine', $selectedMachine);
         }
         if (!empty($selectedProductname) && strtolower($selectedMachine) !== "") {
             $query->where('products.product_name', $selectedProductname);
+        }
+
+        $data = $query->get();
+        return response()->json($data);
+    }
+
+
+    public function getMachineData(Request $request)
+    {
+        $selectedMachine = trim($request->input('selectedMachine'));
+
+        $query = DB::table('machines')
+            ->select('*');
+        
+        if (!empty($selectedMachine) && strtolower($selectedMachine) !== "all") {
+            $query->where('machine_name', $selectedMachine);
         }
 
         $data = $query->get();
