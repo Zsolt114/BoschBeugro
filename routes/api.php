@@ -1,7 +1,10 @@
 <?php
 // routes/api.php
-use App\Http\Controllers\Api\TestChartController23;
+use App\Http\Controllers\Api\ChartController;
+use App\Http\Controllers\Api\MachinesSelectorController;
 
-Route::get('/chart-data-bydate', [TestChartController23::class, 'getDataByDate']);
+Route::get('/api/chart-data-bydate', [ChartController::class, 'getDataByDate']);
 
-Route::get('/chart-data', [TestChartController23::class, 'getData']);
+Route::get('/api/chart-data', [ChartController::class, 'getData']);
+
+Route::get('/api/machineselectoptions', [MachinesSelectorController::class, 'getData']);

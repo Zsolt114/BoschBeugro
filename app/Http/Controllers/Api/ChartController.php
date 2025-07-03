@@ -1,28 +1,39 @@
 <?php
-//app/Http/Controllers/Api/TestChartController.php
+//app/Http/Controllers/Api/ChartController.php
 namespace App\Http\Controllers\Api;
+
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use phpDocumentor\Reflection\PseudoTypes\LowercaseString;
 
-class TestChartController23 extends Controller
+class ChartController extends Controller
 {
-     public function getData()
+    public function getData(Request $request)
     {
-        $data = DB::table('recycling')
+
+
+        $selectedMachine = trim($request->input('selectedMachine'));
+        $query = DB::table('recycling')
             ->join('products', 'recycling.product', '=', 'products.id')
             ->select('products.product_name', DB::raw('COUNT(*) as count'))
             ->groupBy('recycling.product', 'products.product_name')
-            ->orderByDesc('count')
-            ->get();
-
+            ->orderByDesc('count');
+        if (!empty($selectedMachine) && strtolower($selectedMachine) !== "all") {
+            $query->where('recycling.machine', $selectedMachine);
+        }
+        $data = $query->get();
         return response()->json($data);
     }
 
-    
+
     public function getDataByDate(Request $request)
     {
+
+
+
+
         $startDate = $request->input('start_date'); // pl. "2025-07-01"
         $endDate = $request->input('end_date');     // pl. "2025-07-10"
 
@@ -32,15 +43,19 @@ class TestChartController23 extends Controller
             'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
-        // Lekérdezés az intervallumra (példa: 'created_at' mező szerint)
-         $data = DB::table('recycling')
+
+
+        $selectedMachine = trim($request->input('selectedMachine'));
+        $query = DB::table('recycling')
             ->join('products', 'recycling.product', '=', 'products.id')
             ->select('products.product_name', DB::raw('COUNT(*) as count'))
             ->whereBetween('event_date', [$startDate, $endDate])
             ->groupBy('recycling.product', 'products.product_name')
-            ->orderByDesc('count')
-            ->get();
+            ->orderByDesc('count');
+        if (!empty($selectedMachine) && strtolower($selectedMachine) !== "all") {
+            $query->where('recycling.machine', $selectedMachine);
+        }
+        $data = $query->get();
         return response()->json($data);
     }
-    
 }
