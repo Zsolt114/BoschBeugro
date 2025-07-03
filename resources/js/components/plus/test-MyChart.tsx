@@ -12,7 +12,7 @@ const MyBarChart: React.FC = () => {
     const endDate = useAppSelector((state) => state.date.endDate);
     const selectedMachine = useAppSelector((state) => state.machine.selectedMachine);
     const showComponent = useAppSelector((state) => state.component.showComponent);
-const { settableShowSlice } = tableShowSlice.actions;
+    const { settableShowSlice } = tableShowSlice.actions;
 
     const [data, setData] = useState([]);
 
@@ -61,9 +61,9 @@ const { settableShowSlice } = tableShowSlice.actions;
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="product_name" />
                 <YAxis />
-                <Tooltip />
+                <Tooltip contentStyle={{ backgroundColor: '#1e293b', borderColor: '#64748b', color: '#ffffff' }} />
                 <Legend />
-                <Bar dataKey="count" fill="#8884d8" onClick={handleClick} />
+                <Bar dataKey="count" fill="#d97706" onClick={handleClick} />
             </BarChart>
         </ResponsiveContainer>
         
