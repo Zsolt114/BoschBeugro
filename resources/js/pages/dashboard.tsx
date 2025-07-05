@@ -6,10 +6,10 @@ import { Head } from '@inertiajs/react';
 import DateRangeSinglePicker from '@/components/plus/date-rangepicker';
 import SelectMachine from '@/components/plus/machine-select';
 import TableDisplay from '@/components/plus/table-display';
-import MyBarChart from '@/components/plus/test-MyChart';
+import MyBarChart from '@/components/plus/Chart-display';
 
 import { useAppDispatch, useAppSelector } from '../hook';
-import { toggleComponent } from '../store/componentShowSlice';
+import { toggleComponent } from '../store/componentButtonBackToDesboardShowSlice';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

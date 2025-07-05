@@ -31,7 +31,6 @@ export default function TableDisplay() {
                         return response.json();
                     })
                     .then((json) => {
-                        console.log('Kapott adat:', json);
                         setData(json);
                     })
                     .catch((error) => {
@@ -50,7 +49,6 @@ export default function TableDisplay() {
                     return; // Visszatérés, ha null vagy 'all'
                 } else {
                     url.searchParams.append('selectedMachine', selectedMachine);
-                    // Itt folytathatod a további kódot
                 }
 
                 fetch(url.toString(), {
@@ -61,7 +59,6 @@ export default function TableDisplay() {
                         return response.json();
                     })
                     .then((json) => {
-                        console.log('Kapott adat:', json);
                         setTableHeadingData(json);
                     })
                     .catch((error) => {

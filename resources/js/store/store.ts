@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import dateReducer from "./dateSlice";
-import MachineReducer from "./machineSlice";
-import componentShowReducer from "./componentShowSlice";
+import MachineReducer from "./machineNameSlice";
+import componentShowReducer from "./componentButtonBackToDesboardShowSlice";
 import tableShowSlice from "./tableShowSlice";
 
 export const store = configureStore({

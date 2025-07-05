@@ -2,38 +2,43 @@ import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from '@radix-ui/react-icons
 import classnames from 'classnames';
 import { Select } from 'radix-ui';
 import * as React from 'react';
-import { useAppDispatch, useAppSelector } from "../../hook";
-import {  setSelectedMachine } from "../../store/machineSlice";
+import { useAppDispatch, useAppSelector } from '../../hook';
+import { setSelectedMachine } from '../../store/machineNameSlice';
 
 const SelectMachine: React.FC = () => {
     const dispatch = useAppDispatch();
     const selectedMachine = useAppSelector((state) => state.machine.selectedMachine);
-    
 
     const [data, setData] = React.useState([]);
     React.useEffect(() => {
-        const url = new URL('http://localhost:8000/api/machineselectoptions');
+        const fetchData = async () => {
+            try {
+                const url = new URL('http://localhost:8000/api/machineselectoptions');
 
-        fetch(url.toString(), {
-            method: 'GET',
-        })
-            .then((response) => {
-                if (!response.ok) throw new Error('Hiba a kérésben');
-                return response.json();
-            })
-            .then((json) => {
-                console.log('Kapott adat:', json);
-                setData(json);
-            })
-            .catch((error) => {
+                fetch(url.toString(), {
+                    method: 'GET',
+                })
+                    .then((response) => {
+                        if (!response.ok) throw new Error('Hiba a kérésben');
+                        return response.json();
+                    })
+                    .then((json) => {
+                        setData(json);
+                    })
+                    .catch((error) => {
+                        console.error('Hiba:', error);
+                    });
+            } catch (error) {
                 console.error('Hiba:', error);
-            });
+            }
+        };
+        fetchData();
     }, []);
 
     const handleValueChange = (value: string) => {
         dispatch(setSelectedMachine(value));
-        console.log('Redux-ban tárolt gép:', value);
     };
+
     return (
         <Select.Root value={selectedMachine} onValueChange={handleValueChange}>
             <Select.Trigger

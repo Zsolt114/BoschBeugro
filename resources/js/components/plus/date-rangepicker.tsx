@@ -6,8 +6,6 @@ import { setRange } from '../../store/dateSlice';
 
 const DateRangeSinglePicker: React.FC = () => {
     const dispatch = useAppDispatch();
-    const startDate = useAppSelector((state) => state.date.startDate);
-    const endDate = useAppSelector((state) => state.date.endDate);
 
     const [localStartDate, setLocalStartDate] = useState<Date | null>(null);
     const [localEndDate, setLocalEndDate] = useState<Date | null>(null);

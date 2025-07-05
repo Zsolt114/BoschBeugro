@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use phpDocumentor\Reflection\PseudoTypes\LowercaseString;
 
 class ChartController extends Controller
@@ -15,15 +16,25 @@ class ChartController extends Controller
 
 
         $selectedMachine = trim($request->input('selectedMachine'));
-        $query = DB::table('recycling')
-            ->join('products', 'recycling.product', '=', 'products.id')
-            ->select('products.product_name', DB::raw('COUNT(*) as count'))
-            ->groupBy('recycling.product', 'products.product_name')
-            ->orderByDesc('count');
-        if (!empty($selectedMachine) && strtolower($selectedMachine) !== "all") {
-            $query->where('recycling.machine', $selectedMachine);
-        }
-        $data = $query->get();
+
+        // Cache kulcs generálás
+        $cacheKey = 'recycling_' . ($selectedMachine ?: 'all');
+
+        // Cache időtartam (másodpercben) — itt 600 sec = 10 perc
+        $data = Cache::remember($cacheKey, 600, function () use ($selectedMachine) {
+            $query = DB::table('recycling')
+                ->join('products', 'recycling.product', '=', 'products.id')
+                ->select('products.product_name', DB::raw('COUNT(*) as count'))
+                ->groupBy('recycling.product', 'products.product_name')
+                ->orderByDesc('count');
+
+            if (!empty($selectedMachine) && strtolower($selectedMachine) !== "all") {
+                $query->where('recycling.machine', $selectedMachine);
+            }
+
+            return $query->get();
+        });
+
         return response()->json($data);
     }
 
@@ -46,16 +57,23 @@ class ChartController extends Controller
 
 
         $selectedMachine = trim($request->input('selectedMachine'));
-        $query = DB::table('recycling')
-            ->join('products', 'recycling.product', '=', 'products.id')
-            ->select('products.product_name', DB::raw('COUNT(*) as count'))
-            ->whereBetween('event_date', [$startDate, $endDate])
-            ->groupBy('recycling.product', 'products.product_name')
-            ->orderByDesc('count');
-        if (!empty($selectedMachine) && strtolower($selectedMachine) !== "all") {
-            $query->where('recycling.machine', $selectedMachine);
-        }
-        $data = $query->get();
+        $cacheKey = "recycling_{$startDate}_{$endDate}_" . ($selectedMachine ?: 'all');
+
+        // Például 10 percig érvényes cache
+        $data = Cache::remember($cacheKey, 600, function () use ($startDate, $endDate, $selectedMachine) {
+            $query = DB::table('recycling')
+                ->join('products', 'recycling.product', '=', 'products.id')
+                ->select('products.product_name', DB::raw('COUNT(*) as count'))
+                ->whereBetween('event_date', [$startDate, $endDate])
+                ->groupBy('recycling.product', 'products.product_name')
+                ->orderByDesc('count');
+
+            if (!empty($selectedMachine) && strtolower($selectedMachine) !== "all") {
+                $query->where('recycling.machine', $selectedMachine);
+            }
+
+            return $query->get();
+        });
         return response()->json($data);
     }
 }
